@@ -79,8 +79,12 @@ docker-compose up -d
 ```
 
 Les services seront disponibles sur :
-*   MinIO Console : [http://localhost:9001](http://localhost:9001) — Identifiants : `minioadmin` / `minioadmin`
-*   MLflow UI : [http://localhost:5000](http://localhost:5000)
+*   **MinIO Console** (Interface graphique) : [http://localhost:9001](http://localhost:9001)
+    *   **Identifiant** : `minioadmin`
+    *   **Mot de passe** : `minioadmin`
+    *   *Usage : Naviguer dans le bucket `mlflow` pour voir les fichiers `.pkl` et `MLmodel`.*
+*   **MLflow UI** : [http://localhost:5000](http://localhost:5000)
+    *   *Usage : Suivi des métriques, paramètres et registre de modèles.*
 
 > **⚠️ Première installation ?** Si vous migrez depuis une ancienne version de MLflow,
 > pensez à supprimer les anciens volumes Docker pour éviter les erreurs de migration :
@@ -123,7 +127,16 @@ uv run python -m uvicorn api.main:app --reload
 
 L'API est maintenant disponible sur [http://localhost:8000](http://localhost:8000).
 
-### Étape 5 : Tester l'Inférence et le Routeur
+### Étape 5 : Lancer l'interface graphique Streamlit (Optionnel)
+
+Pour tester de manière plus visuelle, une interface Streamlit est disponible. Elle se connecte à l'API FastAPI pour afficher les résultats.
+
+```bash
+uv run streamlit run streamlit_app.py
+```
+L'interface sera disponible sur [http://localhost:8501](http://localhost:8501).
+
+### Étape 6 : Tester l'Inférence et le Routeur (PowerShell)
 
 Déclenchez une prédiction. L'**AI Router** est appelé automatiquement (Tâche : `VALIDATION`) pour formuler une explication de la prédiction.
 
