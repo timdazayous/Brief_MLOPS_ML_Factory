@@ -71,6 +71,25 @@ uv run python src/train/train.py --model forest
 
 ---
 
+## 🏗️ Comprendre le déploiement Zero-Downtime
+
+Pourquoi l'API change-t-elle de modèle sans redémarrer ? Le secret réside dans le découplage entre le stockage et le pilotage.
+
+### 1. Le trio MLOps
+*   **MinIO (Le Hangar)** : C'est le stockage physique (S3). Il contient tous les fichiers des modèles (v1, v2, v3...) dans des dossiers séparés. Il ne choisit rien, il stocke.
+*   **MLflow (Le Chef d'Orchestre)** : Il gère le **Registre de Modèles**. Il sait quel dossier dans MinIO correspond à quelle version, et surtout, il gère les **Aliases**.
+*   **FastAPI (L'Usine)** : L'API ne pointe pas vers un fichier local, mais vers un alias MLflow : `models:/IrisClassifier@Production`.
+
+### 2. Le rôle de l'Alias `@Production`
+L'alias est un "pointeur" virtuel. 
+- Au début, `@Production` pointe vers la **Version 1**.
+- Quand vous déplacez l'alias vers la **Version 2** dans l'UI MLflow, vous ne touchez pas au code. Vous changez simplement la destination du pointeur dans la base de données MLflow.
+
+### 3. Chargement Dynamique
+Toutes les quelques secondes (ou à chaque requête), l'API vérifie si l'ID de version associé à `@Production` a changé. Si c'est le cas, elle télécharge à chaud les nouveaux fichiers depuis MinIO et remplace le modèle en mémoire. C'est le **Hot-Reloading** de l'intelligence artificielle.
+
+---
+
 ## 🛠️ Commandes Utiles
 
 **Voir les logs :**
