@@ -10,6 +10,10 @@ from api.model_loader import load_production_model, model_cache
 
 app = FastAPI(title="ML Serving Factory")
 
+@app.on_event("startup")
+def startup_event():
+    load_production_model()
+
 IRIS_CLASSES = {0: "Setosa", 1: "Versicolor", 2: "Virginica"}
 
 class IrisInput(BaseModel):
@@ -17,6 +21,7 @@ class IrisInput(BaseModel):
 
 @app.get("/health")
 def health():
+    load_production_model()
     return {"status": "up", "model_version": model_cache["version"]}
 
 @app.post("/predict")
