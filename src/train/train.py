@@ -15,6 +15,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from mlflow.models.signature import infer_signature
 from dotenv import load_dotenv
+import boto3
+from botocore.exceptions import ClientError
 
 # Load .env
 load_dotenv()
@@ -26,7 +28,25 @@ os.environ["AWS_SECRET_ACCESS_KEY"] = os.getenv("AWS_SECRET_ACCESS_KEY", "minioa
 os.environ["MLFLOW_S3_ENDPOINT_URL"] = os.getenv("MLFLOW_S3_ENDPOINT_URL", "http://localhost:9000")
 os.environ["MLFLOW_S3_IGNORE_TLS"] = "true"
 
+def ensure_bucket_exists(bucket_name="mlflow"):
+    """Crée le bucket S3 s'il n'existe pas encore."""
+    s3 = boto3.client(
+        "s3",
+        endpoint_url=os.environ["MLFLOW_S3_ENDPOINT_URL"],
+        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+    )
+    try:
+        s3.create_bucket(Bucket=bucket_name)
+        print(f"Bucket '{bucket_name}' créé.")
+    except (ClientError, Exception) as e:
+        # Si le bucket existe déjà (409 Conflict ou AlreadyOwnedByYou), on ignore
+        pass
+
 def train(model_type="logistic", auto_publish=False):
+    # Ensure infrastructure is ready
+    ensure_bucket_exists()
+    
     # Load Iris dataset
     iris = load_iris()
     X = iris.data

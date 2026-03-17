@@ -24,6 +24,22 @@ def debug_log(msg):
     sys.stdout.write(f"DEBUG: {msg}\n")
     sys.stdout.flush()
 
+def ensure_bucket_exists(bucket_name="mlflow"):
+    """Crée le bucket S3 s'il n'existe pas encore."""
+    import boto3
+    from botocore.exceptions import ClientError
+    s3 = boto3.client(
+        "s3",
+        endpoint_url=os.environ["MLFLOW_S3_ENDPOINT_URL"],
+        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+    )
+    try:
+        s3.create_bucket(Bucket=bucket_name)
+        debug_log(f"Bucket '{bucket_name}' vérifié/créé.")
+    except (ClientError, Exception):
+        pass
+
 model_cache = {
     "model": None,
     "version": None
@@ -33,6 +49,9 @@ def load_production_model(model_name="IrisClassifier"):
     """
     Checks the alias '@Production' in MLflow and loads the model if the version changed.
     """
+    # On s'assure que le stockage est prêt au cas où c'est le premier appel
+    ensure_bucket_exists()
+    
     client = MlflowClient()
     try:
         # MLflow aliases are case-sensitive in some versions/backends

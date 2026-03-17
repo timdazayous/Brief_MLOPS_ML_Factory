@@ -79,7 +79,7 @@ uv run python src/train/train.py --model forest
 
 1. Allez sur l'interface **MLflow** ([localhost:5000](http://localhost:5000)).
 2. Dans **Models** > **IrisClassifier**, sélectionnez la **Version 2**.
-3. Ajoutez l'alias **`Production`** à cette version.
+3. Ajoutez l'alias **`production`** à cette version.
 4. **Observez** : La Vitrine Streamlit bascule instantanément vers la **Version 2** sans aucun redémarrage !
 
 ---
@@ -92,10 +92,18 @@ Le projet utilise un découplage total entre le stockage et le pilotage pour gar
 
 * **MinIO (Le Hangar)** : Stockage physique (S3) des fichiers `.pkl`.
 * **MLflow 2.20.2 (Le Chef d'Orchestre)** : Gère le **Registre de Modèles** et les **Aliases**.
-* **FastAPI (L'Usine)** : L'API pointe vers l'alias `models:/IrisClassifier@Production`.
+* **FastAPI (L'Usine)** : L'API pointe vers l'alias `models:/IrisClassifier@production`.
 
 ### 2. Sécurité et Portabilité
 
+- **Auto-Initialisation** : Le script `train.py` et l'API vérifient et créent automatiquement le bucket `mlflow` dans MinIO s'il est manquant via `boto3` :
+  ```python
+  s3 = boto3.client("s3", endpoint_url=os.environ["MLFLOW_S3_ENDPOINT_URL"])
+  try:
+      s3.create_bucket(Bucket="mlflow")
+  except:
+      pass # Déjà existant
+  ```
 - **Réseau Isolé** : Tous les services communiquent sur un réseau Docker privé (`ml-factory-net`).
 - **Pointeurs Dynamiques** : Changer de modèle revient à déplacer un alias dans MLflow, sans toucher au code ni redémarrer les containers.
 - **Support des Hôtes** : L'utilisation de MLflow 2.20.2 assure une meilleure compatibilité avec les configurations réseau modernes.
