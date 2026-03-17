@@ -12,9 +12,9 @@ st.set_page_config(page_title="ML Factory - Vitrine", page_icon="🏢")
 st.title("🏢 ML Factory - Showcase")
 
 # Config
-API_URL = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:8000") # We reuse the var or use default
-# Actually the prompt says the Front must know the API endpoint. Let's provide a setting.
-api_endpoint = st.sidebar.text_input("API Endpoint", "http://localhost:8000")
+# When running in Docker, we use the internal service name 'api'
+DEFAULT_API_URL = os.getenv("API_URL", "http://localhost:8000")
+api_endpoint = st.sidebar.text_input("API Endpoint", DEFAULT_API_URL)
 
 # Header with Version Badge
 try:

@@ -15,14 +15,14 @@ Le projet repose sur une isolation stricte des services. Chaque composant possè
 
 ```text
 ml-factory-project/
-├── data/ iris_test.csv    
+├── data/ iris_test.csv  
 ├── src/
 │   ├── api/ (main.py + Dockerfile)
 │   ├── front/ (app.py + Dockerfile)
 │   └── train/ (train.py)
-├── docker-compose.yml     
-├── pyproject.toml (UV)         
-└── .env                   
+├── docker-compose.yml   
+├── pyproject.toml (UV)       
+└── .env                 
 
 ```
 

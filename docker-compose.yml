@@ -35,6 +35,37 @@ services:
       - mlflow_data:/mlflow
     restart: unless-stopped
 
+  api:
+    build:
+      context: .
+      dockerfile: src/api/Dockerfile
+    container_name: ml_api
+    ports:
+      - "8000:8000"
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      MLFLOW_S3_ENDPOINT_URL: ${DOCKER_MLFLOW_S3_ENDPOINT_URL}
+      MLFLOW_TRACKING_URI: ${DOCKER_MLFLOW_TRACKING_URI}
+      MLFLOW_S3_IGNORE_TLS: "true"
+    depends_on:
+      - mlflow
+      - minio
+    restart: unless-stopped
+
+  front:
+    build:
+      context: .
+      dockerfile: src/front/Dockerfile
+    container_name: ml_front
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: ${API_URL}
+    depends_on:
+      - api
+    restart: unless-stopped
+
 volumes:
   minio_data:
   mlflow_data:
