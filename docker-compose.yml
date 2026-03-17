@@ -44,8 +44,8 @@ services:
       context: .
       dockerfile: src/api/Dockerfile
     container_name: ml_api
-    ports:
-      - "8000:8000" # Requis pour tester l'API directement (curl/Invoke-RestMethod)
+    # ports:
+    #   - "8000:8000" # Caché de l'hôte, accessible uniquement par le front via Docker
     environment:
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
