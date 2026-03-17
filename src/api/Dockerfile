@@ -7,11 +7,13 @@ WORKDIR /app
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
 
-# Copy project files
-COPY pyproject.toml uv.lock ./
+# Copy project files from the service directory
+COPY src/api/pyproject.toml ./
+# We don't have a lock file yet, uv will create one
+# COPY src/api/uv.lock ./ 
 
 # Install dependencies
-RUN uv sync --frozen --no-install-project
+RUN uv sync --no-install-project
 
 # Copy source code (we need the whole src because of cross-imports)
 COPY src ./src

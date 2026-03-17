@@ -1,0 +1,10 @@
+[project]
+name = "ml-factory-front"
+version = "0.1.0"
+description = "Frontend service for the ML Factory"
+dependencies = [
+    "streamlit>=1.40.0",
+    "requests>=2.32.0",
+    "pandas>=2.0.0",
+    "python-dotenv>=1.0.0",
+]

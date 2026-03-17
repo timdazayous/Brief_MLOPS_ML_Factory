@@ -1,0 +1,14 @@
+[project]
+name = "ml-factory-api"
+version = "0.1.0"
+description = "API service for the ML Factory"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.42.0",
+    "mlflow==2.20.2",
+    "pydantic>=2.10.0",
+    "python-dotenv>=1.0.0",
+    "boto3>=1.36.0",
+    "scikit-learn>=1.5.0",
+    "pandas>=2.0.0",
+]
