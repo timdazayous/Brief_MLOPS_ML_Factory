@@ -1,7 +1,7 @@
 [project]
 name = "brief-mlops-ml-factory"
 version = "0.1.0"
-description = "ML Factory with intelligent AI Router"
+description = "ML Factory with Zero-Downtime Infrastructure"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
